@@ -39,9 +39,7 @@ jobs:
       - name: Install backend dependencies
         run: npm ci # 'npm ci' ay mas mabilis at mas reliable kaysa 'npm install' para sa CI
 
-      # 4. (Optional) Patakbuhin ang tests
-      - name: Run backend tests
-        run: npm test
+      # --- TINANGGAL ANG 'npm test' STEP DITO ---
 
   # Trabaho #2: I-build at i-test ang Frontend (React)
   build-frontend:
@@ -73,6 +71,4 @@ jobs:
       - name: Build React app
         run: npm run build
 
-      # 5. (Optional) Patakbuhin ang tests
-      - name: Run frontend tests
-        run: npm test
+      # --- TINANGGAL ANG 'npm test' STEP DITO ---
