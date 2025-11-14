@@ -1,0 +1,74 @@
+# Pangalan ng iyong workflow
+name: MERN Stack CI/CD
+
+# Kailan tatakbo ang workflow na ito?
+on:
+  # Tumatakbo kapag may nag-push sa 'main' branch
+  push:
+    branches: [ "main" ]
+  # Tumatakbo rin kapag may nag-open ng Pull Request papunta sa 'main'
+  pull_request:
+    branches: [ "main" ]
+
+# Ang mga "trabaho" na gagawin
+jobs:
+  # Trabaho #1: I-build at i-test ang Backend (Express/Node)
+  build-backend:
+    # Sa anong machine ito tatakbo (Ubuntu ang standard)
+    runs-on: ubuntu-latest
+    
+    # Mahalaga: Itatakda nito ang default folder para sa job na 'to
+    defaults:
+      run:
+        working-directory: ./backend  # <-- Folder para sa backend
+
+    steps:
+      # 1. Kukunin ang code mo mula sa repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. I-se-setup ang Node.js environment
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x' # Pwede mong palitan sa version na gamit mo
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      # 3. I-i-install ang dependencies
+      - name: Install backend dependencies
+        run: npm ci # 'npm ci' ay mas mabilis at mas reliable kaysa 'npm install' para sa CI
+
+      # --- TINANGGAL ANG 'npm test' STEP DITO ---
+
+  # Trabaho #2: I-build at i-test ang Frontend (React)
+  build-frontend:
+    # Tatakbo ito "after" o "kasabay" ng build-backend
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./MEDILOG  # <-- Pinalitan na para sa 'MEDILOG'
+
+    steps:
+      # 1. Kukunin ang code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. I-se-setup ang Node.js
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          cache-dependency-path: MEDILOG/package-lock.json # <-- Pinalitan na rin dito
+
+      # 3. I-i-install ang dependencies
+      - name: Install frontend dependencies
+        run: npm ci
+
+      # 4. I-bi-build ang React app (para malaman kung may errors)
+      - name: Build React app
+        run: npm run build
+
+      # --- TINANGGAL ANG 'npm test' STEP DITO ---
